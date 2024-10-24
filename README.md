@@ -1,4 +1,4 @@
-## What is ansible-acme-sh? [![Build Status](https://secure.travis-ci.org/nickjj/ansible-acme-sh.png)](http://travis-ci.org/nickjj/ansible-acme-sh)
+## What is ansible-acme-sh? 
 
 It is an [Ansible](http://www.ansible.com/home) role to:
 
@@ -295,7 +295,7 @@ To use this role edit your `site.yml` file to look something like this:
   become: True
 
   roles:
-    - { role: "nickjj.acme_sh", tags: ["acme_sh"] }
+    - { role: "acme_sh", tags: ["acme_sh"] }
 ```
 
 Here's a few examples. You can recreate this example on your end by opening or
@@ -376,20 +376,7 @@ acme_sh_domains:
     force_renew: True
 ```
 
-*If you're looking for an Ansible role to create users, then check out my
-[user role](https://github.com/nickjj/ansible-user)*.
-
 Now you would run `ansible-playbook -i inventory/hosts site.yml -t acme_sh`.
-
-## Installation
-
-`$ ansible-galaxy install nickjj.acme_sh`
-
-## Ansible Galaxy
-
-You can find it on the official
-[Ansible Galaxy](https://galaxy.ansible.com/nickjj/acme_sh/) if you want to
-rate it.
 
 ## License
 
