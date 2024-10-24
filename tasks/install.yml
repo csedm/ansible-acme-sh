@@ -1,11 +1,4 @@
 ---
-- name: Install dependencies
-  package:
-    name: "{{ item }}"
-    state: "present"
-  loop: "{{ acme_sh_dependencies }}"
-  when: not acme_sh_uninstall
-
 - name: Create git clone path
   file:
     path: "{{ acme_sh_git_clone_dest | dirname }}"
