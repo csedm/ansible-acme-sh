@@ -1,5 +1,4 @@
 ---
-
 - name: Install acme.sh
   ansible.builtin.import_tasks: install.yml
   when: not acme_sh_uninstall
@@ -14,71 +13,6 @@
     - not acme_sh_uninstall
   register: upgrade_result
   changed_when: upgrade_result.rc == 0 and "Upgrade success" in upgrade_result.stdout
-  become_user: "{{ acme_sh_become_user }}"
-
-- name: Create certificate path
-  file:
-    path: "{{ acme_sh_copy_certs_to_path }}"
-    state: "directory"
-    owner: "{{ acme_sh_become_user }}"
-    group: "{{ acme_sh_become_user }}"
-    mode: "0755"
-  when: not acme_sh_uninstall
-
-- name: Uninstall acme.sh and disable all certificate renewals
-  command: ./acme.sh --uninstall
-  args:
-    chdir: "~/.acme.sh"
-  when:
-    - acme_sh_uninstall
-    - is_acme_sh_installed.stat.exists
-  become_user: "{{ acme_sh_become_user }}"
-
-- name: Remove acme.sh certificate(s) renewals from cron job
-  command: >-
-    ./acme.sh --remove -d {{ item.domains | first }}
-    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
-  args:
-    chdir: "~/.acme.sh"
-    removes: "~/.acme.sh/{{ item.domains | first }}"
-  loop: "{{ acme_sh_domains }}"
-  when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.remove is defined and item.remove
-    - not acme_sh_uninstall
-  become_user: "{{ acme_sh_become_user }}"
-  register: remove_result
-
-- name: Remove acme.sh internal certificate files
-  file:
-    path: "~/.acme.sh/{{ item.domains | first }}"
-    state: "absent"
-  when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.remove is defined and item.remove
-    - not acme_sh_uninstall
-  loop: "{{ acme_sh_domains }}"
-  become_user: "{{ acme_sh_become_user }}"
-
-- name: Remove acme.sh installed certificate files
-  file:
-    path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
-    state: "absent"
-  loop: "{{ acme_sh_domains }}"
-  when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.remove is defined and item.remove
-    - not acme_sh_uninstall
-
-- name: Remove acme.sh's cloned source code, installation path and log files
-  file:
-    path: "{{ item }}"
-    state: "absent"
-  loop:
-    - "{{ acme_sh_git_clone_dest }}"
-    - "~/.acme.sh"
-  when:
-    - acme_sh_uninstall
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Run custom acme.sh command
