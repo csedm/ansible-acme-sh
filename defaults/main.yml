@@ -3,11 +3,18 @@
 acme_sh_become_user: "root"
 
 acme_sh_git_url: "https://github.com/acmesh-official/acme.sh"
+acme_sh_git_releases_api_url: "https://api.github.com/repos/acmesh-official/acme.sh/releases/latest"
 acme_sh_git_version: "master"
 acme_sh_git_update: False
 acme_sh_git_clone_dest: "/usr/local/src/acme.sh"
+acme_sh_tmp_download_path: "/tmp"
+acme_sh_install_path: "/usr/local/bin"
+acme_sh_config_home: "/etc/acmesh"
+acme_sh_cert_home: "/etc/ssl/acmesh"
 
 acme_sh_upgrade: False
+# valid values: present, absent, latest
+acme_sh_install_state: true
 acme_sh_uninstall: False
 
 acme_sh_account_email: ""

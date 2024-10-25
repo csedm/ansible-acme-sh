@@ -1,19 +1,41 @@
 ---
+- name: Validate acme_sh_install_state parameter
+  ansible.builtin.fail:
+    msg: "invalid value for acme_sh_install_state: {{ acme_sh_install_state }}"
+  when: >
+    acme_sh_install_state is not 'present' or
+    acme_sh_install_state is not 'absent' or
+    acme_sh_install_state is not 'latest'
+
+- name: Determine if acme.sh is installed
+  stat:
+    path: "{{ acme_sh_install_path }}/acme.sh"
+  register: is_acme_sh_installed
+
 - name: Install acme.sh
   ansible.builtin.import_tasks: install.yml
-  when: not acme_sh_uninstall
+  when:
+  - acme_sh_install_state is 'present'
+  - not is_acme_sh_installed.stat.exists
 
 - name: Upgrade acme.sh
-  command: ./acme.sh --upgrade
-  args:
-    chdir: "~/.acme.sh"
+  command: |
+    {{ acme_sh_install_path }}/acme.sh --upgrade
   when:
-    - acme_sh_upgrade
+    - acme_sh_install_state is 'latest'
     - is_acme_sh_installed.stat.exists
-    - not acme_sh_uninstall
   register: upgrade_result
   changed_when: upgrade_result.rc == 0 and "Upgrade success" in upgrade_result.stdout
-  become_user: "{{ acme_sh_become_user }}"
+
+- name: Create path to copy certs to
+  file:
+    path: "{{ acme_sh_copy_certs_to_path }}"
+    state: "directory"
+    owner: "{{ acme_sh_become_user }}"
+    group: "{{ acme_sh_become_user }}"
+    mode: "0755"
+  when: not acme_sh_uninstall
+
 
 - name: Run custom acme.sh command
   command: ./acme.sh {{ item.custom_command }}
