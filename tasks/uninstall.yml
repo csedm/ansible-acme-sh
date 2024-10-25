@@ -1,57 +1,53 @@
 ---
 - name: Uninstall acme.sh and disable all certificate renewals
-  command: ./acme.sh --uninstall
-  args:
-    chdir: "~/.acme.sh"
-  when:
-    - acme_sh_uninstall
-    - is_acme_sh_installed.stat.exists
-  become_user: "{{ acme_sh_become_user }}"
+  ansible.builtin.command: |
+    {{ acme_sh_install_path }}/acme.sh --uninstall
+  register: acme_sh_uninstall_result
 
-- name: Remove acme.sh certificate(s) renewals from cron job
-  command: >-
-    ./acme.sh --remove -d {{ item.domains | first }}
-    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
-  args:
-    chdir: "~/.acme.sh"
-    removes: "~/.acme.sh/{{ item.domains | first }}"
-  loop: "{{ acme_sh_domains }}"
-  when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.remove is defined and item.remove
-    - not acme_sh_uninstall
-  become_user: "{{ acme_sh_become_user }}"
-  register: remove_result
+#- name: Remove acme.sh certificate(s) renewals from cron job
+#  command: >-
+#    {{ acme_sh_install_path }}/acme.sh --remove -d {{ item.domains | first }} 
+#    {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
+#  args:
+#    removes: "{{ acme_sh_config_home }}{{ item.domains | first }}"
+#  loop: "{{ acme_sh_domains }}"
+#  when:
+#    - acme_sh_domains and item.domains is defined and item.domains
+#    - item.remove is defined and item.remove
+#    - not acme_sh_uninstall
+#  become_user: "{{ acme_sh_become_user }}"
+#  register: remove_result
 
-- name: Remove acme.sh internal certificate files
-  file:
-    path: "~/.acme.sh/{{ item.domains | first }}"
-    state: "absent"
-  when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.remove is defined and item.remove
-    - not acme_sh_uninstall
-  loop: "{{ acme_sh_domains }}"
-  become_user: "{{ acme_sh_become_user }}"
+#- name: Remove acme.sh internal certificate files
+#  file:
+#    path: "~/.acme.sh/{{ item.domains | first }}"
+#    state: "absent"
+#  when:
+#    - acme_sh_domains and item.domains is defined and item.domains
+#    - item.remove is defined and item.remove
+#    - not acme_sh_uninstall
+#  loop: "{{ acme_sh_domains }}"
+#  become_user: "{{ acme_sh_become_user }}"
 
-- name: Remove acme.sh installed certificate files
-  file:
-    path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
-    state: "absent"
-  loop: "{{ acme_sh_domains }}"
-  when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.remove is defined and item.remove
-    - not acme_sh_uninstall
+#- name: Remove acme.sh installed certificate files
+#  file:
+#    path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
+#    state: "absent"
+#  loop: "{{ acme_sh_domains }}"
+#  when:
+#    - acme_sh_domains and item.domains is defined and item.domains
+#    - item.remove is defined and item.remove
+#    - not acme_sh_uninstall
 
 - name: Remove acme.sh's cloned source code, installation path and log files
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: "absent"
   loop:
     - "{{ acme_sh_git_clone_dest }}"
     - "~/.acme.sh"
-  when:
-    - acme_sh_uninstall
-  become_user: "{{ acme_sh_become_user }}"
+    - "{{ acme_sh_tmp_download_path }}/acmesh.tar.gz"
+    - "{{ acme_sh_install_path }}/acme.sh }}"
+    - "{{ acme_sh_config_home }}"
+    - "{{ acme_sh_cert_home }}"
 ...

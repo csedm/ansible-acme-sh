@@ -27,6 +27,12 @@
   register: upgrade_result
   changed_when: upgrade_result.rc == 0 and "Upgrade success" in upgrade_result.stdout
 
+- name: Uninstall acme.sh
+  ansible.builtin.import_tasks: uninstall.yml
+  when:
+  - acme_sh_install_state is 'absent'
+  - is_acme_sh_installed.stat.exists
+
 - name: Create path to copy certs to
   file:
     path: "{{ acme_sh_copy_certs_to_path }}"
@@ -37,20 +43,20 @@
   when: not acme_sh_uninstall
 
 
-- name: Run custom acme.sh command
-  command: ./acme.sh {{ item.custom_command }}
-  args:
-    chdir: "~/.acme.sh"
-  environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
-  loop: "{{ acme_sh_domains }}"
-  when:
-    - acme_sh_domains and item.domains is defined and item.domains
-    - item.dns_provider | default(acme_sh_default_dns_provider)
-    - item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys)
-    - item.custom_command is defined and item.custom_command
-    - item.remove is undefined or not item.remove
-    - not acme_sh_uninstall
-  become_user: "{{ acme_sh_become_user }}"
+#- name: Run custom acme.sh command
+#  command: ./acme.sh {{ item.custom_command }}
+#  args:
+#    chdir: "~/.acme.sh"
+#  environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
+#  loop: "{{ acme_sh_domains }}"
+#  when:
+#    - acme_sh_domains and item.domains is defined and item.domains
+#    - item.dns_provider | default(acme_sh_default_dns_provider)
+#    - item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys)
+#    - item.custom_command is defined and item.custom_command
+#    - item.remove is undefined or not item.remove
+#    - not acme_sh_uninstall
+#  become_user: "{{ acme_sh_become_user }}"
 
 - name: Issue acme.sh certificate(s) (this will sleep for dns_sleep seconds)
   command: >-
@@ -136,6 +142,7 @@
   changed_when: issue_result.results[domains_index].changed or renew_result.results[domains_index].changed
   failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr
 
+# Display results
 - name: Register acme.sh certificate information
   command: ./acme.sh --list
   args:
