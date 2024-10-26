@@ -8,7 +8,7 @@
   - acme_sh_install_state is not 'latest'
 
 - name: Determine if acme.sh is installed
-  stat:
+  ansible.builtin.stat:
     path: "{{ acme_sh_install_path }}/acme.sh"
   register: is_acme_sh_installed
 
@@ -19,7 +19,7 @@
   - not is_acme_sh_installed.stat.exists
 
 - name: Upgrade acme.sh
-  command: |
+  ansible.builtin.command: |
     {{ acme_sh_install_path }}/acme.sh --upgrade
   when:
     - acme_sh_install_state is 'latest'
@@ -34,7 +34,7 @@
   - is_acme_sh_installed.stat.exists
 
 - name: Create path to copy certs to
-  file:
+  ansible.builtin.file:
     path: "{{ acme_sh_copy_certs_to_path }}"
     state: "directory"
     owner: "{{ acme_sh_become_user }}"
@@ -88,7 +88,7 @@
   failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
 
 - name: Force renew acme.sh certificate(s)
-  command: >-
+  ansible.builtin.command: >-
     {{ acme_sh_install_path }}/acme.sh --renew -d {{ item.domains | first }} --force
     {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
     {{ item.extra_flags_renew | default(acme_sh_default_extra_flags_renew) }}
@@ -107,7 +107,7 @@
 
 #region install-certs
 - name: Ensure installed certificates have correct user / group ownership
-  file:
+  ansible.builtin.file:
     path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
     group: "{{ acme_sh_become_user }}"
     owner: "{{ acme_sh_become_user }}"
@@ -121,7 +121,7 @@
     - acme_sh_install_state is not 'absent'
 
 - name: Install acme.sh certificate(s)
-  command: >-
+  ansible.builtin.command: >-
     {{acme_sh_install_path }}/acme.sh --install-cert -d {{ item.domains | first }}
     --key-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.key
     --fullchain-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.pem
@@ -145,7 +145,7 @@
 
 #region display-results
 - name: Register acme.sh certificate information
-  command: ./acme.sh --list
+  ansible.builtin.command: ./acme.sh --list
   args:
     chdir: "~/.acme.sh"
   when: 
@@ -156,7 +156,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: List acme.sh certificate information
-  debug:
+  ansible.builtin.debug:
     msg: "{{ list_domains.stdout_lines }}"
   when: 
   - not ansible_check_mode
