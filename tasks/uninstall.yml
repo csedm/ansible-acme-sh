@@ -39,7 +39,7 @@
 #    - item.remove is defined and item.remove
 #    - not acme_sh_uninstall
 
-- name: Remove acme.sh's cloned source code, installation path and log files
+- name: Remove paths created for acme.sh
   ansible.builtin.file:
     path: "{{ item }}"
     state: "absent"
