@@ -10,20 +10,9 @@
     path: "{{ item }}"
   with_items:
   - "{{ acme_sh_tmp_download_path }}"
- # - "{{ acme_sh_tmp_download_path }}/acmesh"
   - "{{ acme_sh_install_path }}"
   - "{{ acme_sh_config_home }}"
   - "{{ acme_sh_cert_home }}"
-
-#- name: Get the latest release published on GitHub
-#  ansible.builtin.uri:
-#    url: "{{ acme_sh_git_releases_api_url }}"
-#  register: acme_sh_github_release
-
-#- name: Download acme.sh release tarball from GitHub
-#  ansible.builtin.uri:
-#    url: "{{ acme_sh_github_release.json.tarball_url }}"
-#    dest: "{{ acme_sh_tmp_download_path }}/acmesh.tar.gz"
 
 - name: Download acme.sh from GitHub
   ansible.builtin.uri:
@@ -32,21 +21,6 @@
     mode: '0744'
     owner: root
 
-#- name: Unzip acme.sh release tarball (OpenBSD)
-#  ansible.builtin.command:
-#    cmd: |
-#      tar xzf {{ acme_sh_tmp_download_path }}/acmesh.tar.gz }} -C {{ acme_sh_tmp_download_path }}/
-#  when: ansible_os_family == 'OpenBSD'
-
-#- name: Unzip acme.sh release tarball
-#  ansible.builtin.unarchive:
-#      src: "{{ acme_sh_tmp_download_path }}/acmesh.tar.gz"
-#      dest: "{{ acme_sh_tmp_download_path }}/"
-#      remote_src: yes
-#  ignore_errors: "{{ ansible_check_mode }}"
-#  when: ansible_os_family != 'OpenBSD'
-
-# Figure out what vars to use here, put them in defaults, etc...
 - name: Install acme.sh
   ansible.builtin.command:
     cmd: >-
@@ -66,5 +40,4 @@
     path: "{{ item }}"
   with_items:
   - "{{ acme_sh_tmp_download_path }}/acmesh.sh"
-#  - "{{ acme_sh_tmp_download_path }}/acmesh.tar.gz"
 ...
