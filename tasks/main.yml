@@ -38,7 +38,7 @@
     path: "{{ acme_sh_copy_certs_to_path }}"
     state: "directory"
     owner: "{{ acme_sh_become_user }}"
-    group: "{{ acme_sh_become_user }}"
+    group: "{{ platform_equivalent_groups[acme_sh_become_user][ansible_os_family] }}"
     mode: "0755"
   when: acme_sh_install_state != "absent"
 

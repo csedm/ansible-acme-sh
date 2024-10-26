@@ -1,0 +1,5 @@
+platform_equivalent_groups:
+  root:
+    Debian: root
+    RedHat: root
+    OpenBSD: wheel
