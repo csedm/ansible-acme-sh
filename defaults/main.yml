@@ -9,7 +9,7 @@ acme_sh_config_home: "/etc/acmesh"
 acme_sh_cert_home: "/etc/ssl/acmesh"
 
 # valid values: present, absent, latest
-acme_sh_install_state: true
+acme_sh_install_state: present
 
 acme_sh_account_email: ""
 
