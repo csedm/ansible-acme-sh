@@ -1,6 +1,7 @@
 ---
 acme_sh_become_user: "root"
 
+acme_sh_github_raw_url: "https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh"
 acme_sh_git_releases_api_url: "https://api.github.com/repos/acmesh-official/acme.sh/releases/latest"
 acme_sh_tmp_download_path: "/tmp"
 acme_sh_install_path: "/usr/local/bin"
