@@ -21,7 +21,7 @@ jobs:
         id: lint
         run: |
           sudo apt-get install -y ansible-lint
-          ansible-lint ./* --profile min --exclude test/
+          ansible-lint --exclude test/ --force-color ./*
   test:
     runs-on: ubuntu-latest
     steps:
