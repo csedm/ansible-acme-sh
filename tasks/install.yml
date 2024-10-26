@@ -23,7 +23,7 @@
 - name: Download acme.sh from GitHub
   ansible.builtin.uri:
     url: "{{ acme_sh_github_raw_url }}"
-    dest: "{{ acme_sh_tmp_download_path }}/acmesh.sh"
+    dest: "{{ acme_sh_tmp_download_path }}/acme.sh"
 
 #- name: Unzip acme.sh release tarball (OpenBSD)
 #  ansible.builtin.command:
