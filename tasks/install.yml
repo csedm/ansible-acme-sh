@@ -52,6 +52,7 @@
       --cert-home {{ acme_sh_cert_home }}
       --days {{ acme_sh_renew_time_in_days }}
   args:
+    chdir: "{{ acme_sh_tmp_download_path }}"
     creates: "{{ acme_sh_install_path }}/acme.sh"
 
 - name: Remove temporary download files
