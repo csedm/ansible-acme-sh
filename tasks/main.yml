@@ -109,7 +109,7 @@
 - name: Ensure installed certificates have correct user / group ownership
   ansible.builtin.file:
     path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
-    group: "{{ acme_sh_become_user }}"
+    group: "{{ platform_equivalent_groups[acme_sh_become_user][ansible_os_family] }}"
     owner: "{{ acme_sh_become_user }}"
     mode: "0644"
   loop:
