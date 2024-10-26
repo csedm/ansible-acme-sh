@@ -6,8 +6,10 @@
   vars:
     ansible_connection: local
     acme_sh_install_state: present
-  roles:
-    - "acme_sh"
+  tasks:
+  - name: Include role now
+    ansible.builtin.include_role: 
+      name: acme_sh
 
 - name: Post-install tests
   hosts: localhost
@@ -42,8 +44,10 @@
   vars:
     ansible_connection: local
     acme_sh_install_state: absent
-  roles:
-  - acme_sh
+  tasks:
+  - name: Include role now
+    ansible.builtin.include_role: 
+      name: acme_sh
 
 - name: Post-uninstall tests
   hosts: localhost
@@ -64,4 +68,3 @@
     failed_when: result_acme_she_created_paths
     with_items:
     - /etc/acmesh
-    - /etc/ssl/acmesh

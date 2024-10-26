@@ -48,5 +48,4 @@
     - "{{ acme_sh_tmp_download_path }}/acmesh.tar.gz"
     - "{{ acme_sh_install_path }}/acme.sh }}"
     - "{{ acme_sh_config_home }}"
-    - "{{ acme_sh_cert_home }}"
 ...
