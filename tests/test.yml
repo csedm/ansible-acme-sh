@@ -24,7 +24,7 @@
     
     - name: Ensure temp download files were removed
       ansible.builtin.stat:
-        path: {{ item }}
+        path: "{{ item }}"
       register: result_tmp_download_path
       failed_when: result_tmp_download_path.stat.exists
       with_items:
@@ -49,7 +49,7 @@
   
   - name: Ensure acme.sh created paths were removed
     ansible.builtin.stat:
-      path: {{ item }}
+      path: "{{ item }}"
     register: result_acme_sh_created_paths
     failed_when: result_acme_she_created_paths
     with_items:
