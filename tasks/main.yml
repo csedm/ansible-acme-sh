@@ -2,10 +2,10 @@
 - name: Validate acme_sh_install_state parameter
   ansible.builtin.fail:
     msg: "invalid value for acme_sh_install_state: {{ acme_sh_install_state }}"
-  when: >
-    acme_sh_install_state is not 'present' or
-    acme_sh_install_state is not 'absent' or
-    acme_sh_install_state is not 'latest'
+  when:
+  - acme_sh_install_state is not 'present'
+  - acme_sh_install_state is not 'absent'
+  - acme_sh_install_state is not 'latest'
 
 - name: Determine if acme.sh is installed
   stat:
@@ -40,7 +40,7 @@
     owner: "{{ acme_sh_become_user }}"
     group: "{{ acme_sh_become_user }}"
     mode: "0755"
-  when: not acme_sh_uninstall
+  when: acme_sh_install_state is not 'absent'
 
 
 #- name: Run custom acme.sh command
@@ -58,9 +58,11 @@
 #    - not acme_sh_uninstall
 #  become_user: "{{ acme_sh_become_user }}"
 
-- name: Issue acme.sh certificate(s) (this will sleep for dns_sleep seconds)
-  command: >-
-    ./acme.sh --issue -d {{ item.domains | join(" -d ") }}
+
+#region issue/renew/force-renew
+- name: "Issue acme.sh certificate(s) (wait dns_sleep seconds for DNS)"
+  ansible.builtin.command: >-
+    {{ acme_sh_install_path }}/acme.sh --issue -d {{ item.domains | join(" -d ") }}
     --dns {{ item.dns_provider | default(acme_sh_default_dns_provider) }}
     --dnssleep {{ item.dns_sleep | default(acme_sh_default_dns_sleep) }}
     {{ "--force" if item.force_issue | default(acme_sh_default_force_issue) else "" }}
@@ -70,8 +72,6 @@
     {{ "--post-hook " + '"' + item.issue_post_hook | default(acme_sh_default_issue_post_hook) + '"' if item.issue_post_hook | default(acme_sh_default_issue_post_hook) else "" }}
     {{ "--renew-hook " + '"' + item.issue_renew_hook | default(acme_sh_default_issue_renew_hook) + '"' if item.issue_renew_hook | default(acme_sh_default_issue_renew_hook) else "" }}
     {{ item.extra_flags_issue | default(acme_sh_default_extra_flags_issue) }}
-  args:
-    chdir: "~/.acme.sh"
   environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
   loop: "{{ acme_sh_domains }}"
   when:
@@ -81,7 +81,7 @@
     - item.force_renew is undefined or not item.force_renew
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
-    - not acme_sh_uninstall
+    - acme_sh_install_state is not 'absent'
   become_user: "{{ acme_sh_become_user }}"
   register: issue_result
   changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout
@@ -89,22 +89,23 @@
 
 - name: Force renew acme.sh certificate(s)
   command: >-
-    ./acme.sh --renew -d {{ item.domains | first }} --force
+    {{ acme_sh_install_path }}/acme.sh --renew -d {{ item.domains | first }} --force
     {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
     {{ item.extra_flags_renew | default(acme_sh_default_extra_flags_renew) }}
-  args:
-    chdir: "~/.acme.sh"
   loop: "{{ acme_sh_domains }}"
   when:
     - acme_sh_domains and item.domains is defined and item.domains
     - item.force_issue is undefined or not item.force_issue
     - item.force_renew is defined and item.force_renew
     - item.remove is undefined or not item.remove
-    - not acme_sh_uninstall
+    - acme_sh_install_state is not 'absent'
   become_user: "{{ acme_sh_become_user }}"
   register: renew_result
   failed_when: renew_result.rc != 0 and "Reload error for" not in renew_result.stderr
+#endregion
 
+
+#region install-certs
 - name: Ensure installed certificates have correct user / group ownership
   file:
     path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
@@ -117,18 +118,16 @@
     - acme_sh_domains and item.domains is defined and item.domains
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
-    - not acme_sh_uninstall
+    - acme_sh_install_state is not 'absent'
 
 - name: Install acme.sh certificate(s)
   command: >-
-    ./acme.sh --install-cert -d {{ item.domains | first }}
+    {{acme_sh_install_path }}/acme.sh --install-cert -d {{ item.domains | first }}
     --key-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.key
     --fullchain-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.pem
     --reloadcmd "{{ item.install_cert_reloadcmd | default(acme_sh_default_install_cert_reloadcmd) }}"
     {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
     {{ item.extra_flags_install_cert | default(acme_sh_default_extra_flags_install_cert) }}
-  args:
-    chdir: "~/.acme.sh"
   loop: "{{ acme_sh_domains }}"
   loop_control:
     index_var: domains_index
@@ -136,18 +135,22 @@
     - acme_sh_domains and item.domains is defined and item.domains
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
-    - not acme_sh_uninstall
+    - acme_sh_install_state is not 'absent'
   become_user: "{{ acme_sh_become_user }}"
   register: install_cert_result
   changed_when: issue_result.results[domains_index].changed or renew_result.results[domains_index].changed
   failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr
+#endregion
 
-# Display results
+
+#region display-results
 - name: Register acme.sh certificate information
   command: ./acme.sh --list
   args:
     chdir: "~/.acme.sh"
-  when: acme_sh_list_domains and not acme_sh_uninstall
+  when: 
+  - acme_sh_list_domains
+  - acme_sh_install_state is not 'absent'
   changed_when: False
   register: list_domains
   become_user: "{{ acme_sh_become_user }}"
@@ -155,4 +158,9 @@
 - name: List acme.sh certificate information
   debug:
     msg: "{{ list_domains.stdout_lines }}"
-  when: not ansible_check_mode and acme_sh_list_domains and not acme_sh_uninstall
+  when: 
+  - not ansible_check_mode
+  - acme_sh_list_domains
+  - acme_sh_install_state is not 'absent'
+#endregion
+...
