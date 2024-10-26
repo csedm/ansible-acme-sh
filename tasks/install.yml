@@ -33,6 +33,9 @@
   args:
     chdir: "{{ acme_sh_tmp_download_path }}"
     creates: "{{ acme_sh_install_path }}/acme.sh"
+  register: acme_sh_install_result
+  changed_when: acme_sh_install_result.rc == 0
+  failed_when: acme_sh_install_result.rc != 0
 
 - name: Remove temporary download files
   ansible.builtin.file:
