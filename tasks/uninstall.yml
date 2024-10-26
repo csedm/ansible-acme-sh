@@ -44,7 +44,6 @@
     path: "{{ item }}"
     state: "absent"
   loop:
-    - "{{ acme_sh_git_clone_dest }}"
     - "~/.acme.sh"
     - "{{ acme_sh_tmp_download_path }}/acmesh.tar.gz"
     - "{{ acme_sh_install_path }}/acme.sh }}"
