@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo apt-get install -y ansible-lint
           ansible-lint --exclude test/ --force-color ./*
-  test:
+  test-ubuntu:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,9 +30,14 @@ jobs:
         id: test-ubuntu
         run: |
           sudo apt-get install -y ansible
-          sudo mkdir -p /etc/ansible/roles/
-          sudo cp -r ./* /etc/ansible/roles/
+          sudo mkdir -p /etc/ansible/roles/acme_sh
+          sudo cp -r ./* /etc/ansible/roles/acme_sh
           ansible-playbook -i localhost, tests/test.yml
+
+  test-openbsd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Test acme_sh role on OpenBSD
         id: test-openbsd
         uses: vmactions/openbsd-vm@v1.1.2
@@ -42,7 +47,7 @@ jobs:
           cpu: 2
           prepare: |
             pkg_add ansible
-            mkdir -p /etc/ansible/roles/
-            cp -r ./* /etc/ansible/roles/
+            mkdir -p /etc/ansible/roles/acme_sh
+            cp -r ./* /etc/ansible/roles/acme_sh
           run: |
             ansible-playbook -i localhost, tests/test.yml
