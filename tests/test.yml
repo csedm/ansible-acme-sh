@@ -67,6 +67,6 @@
     ansible.builtin.stat:
       path: "{{ item }}"
     register: result_acme_sh_created_paths
-    failed_when: result_acme_sh_created_paths
+    failed_when: result_acme_sh_created_paths.stat.exists
     with_items:
     - /etc/acmesh
