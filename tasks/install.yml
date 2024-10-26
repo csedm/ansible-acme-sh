@@ -1,4 +1,9 @@
 ---
+- name: Install acme.sh dependencies
+  ansible.builtin.package:
+    name: "{{ item }}"
+  with_items: "{{ acme_sh_dependencies[ansible_os_family] }}"
+
 - name: Ensure needed directories exist
   ansible.builtin.file:
     state: directory
