@@ -1,3 +1,4 @@
+---
 acme_sh_dependencies:
   OpenBSD:
   - curl
@@ -10,3 +11,5 @@ platform_equivalent_groups:
     Debian: root
     RedHat: root
     OpenBSD: wheel
+
+...

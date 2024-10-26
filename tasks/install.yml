@@ -40,4 +40,5 @@
     path: "{{ item }}"
   with_items:
   - "{{ acme_sh_tmp_download_path }}/acmesh.sh"
+
 ...

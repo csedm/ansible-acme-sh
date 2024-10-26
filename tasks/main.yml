@@ -43,7 +43,7 @@
   when: acme_sh_install_state != "absent"
 
 
-#- name: Run custom acme.sh command
+# - name: Run custom acme.sh command
 #  command: ./acme.sh {{ item.custom_command }}
 #  args:
 #    chdir: "~/.acme.sh"
@@ -148,7 +148,7 @@
   ansible.builtin.command:
     cmd: >-
       {{ acme_sh_install_path }}/acme.sh --list
-  when: 
+  when:
   - acme_sh_list_domains
   - acme_sh_domains is defined
   - acme_sh_install_state != "absent"
@@ -156,10 +156,11 @@
   register: list_domains
   become_user: "{{ acme_sh_become_user }}"
 
-- name: List acme.sh certificate information
+- name: List acme.sh certificate information # - "{{ acme_sh_tmp_download_path }}/acmesh"
+
   ansible.builtin.debug:
     msg: "{{ list_domains.stdout_lines }}"
-  when: 
+  when:
   - not ansible_check_mode
   - acme_sh_list_domains
   - acme_sh_domains is defined
