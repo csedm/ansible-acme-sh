@@ -3,9 +3,9 @@
   ansible.builtin.fail:
     msg: "invalid value for acme_sh_install_state: {{ acme_sh_install_state }}"
   when:
-  - acme_sh_install_state is not 'present'
-  - acme_sh_install_state is not 'absent'
-  - acme_sh_install_state is not 'latest'
+  - acme_sh_install_state != "present"
+  - acme_sh_install_state != "absent"
+  - acme_sh_install_state != "latest"
 
 - name: Determine if acme.sh is installed
   ansible.builtin.stat:
@@ -15,14 +15,14 @@
 - name: Install acme.sh
   ansible.builtin.import_tasks: install.yml
   when:
-  - acme_sh_install_state is 'present'
+  - acme_sh_install_state == "present"
   - not is_acme_sh_installed.stat.exists
 
 - name: Upgrade acme.sh
   ansible.builtin.command: |
     {{ acme_sh_install_path }}/acme.sh --upgrade
   when:
-    - acme_sh_install_state is 'latest'
+    - acme_sh_install_state == "latest"
     - is_acme_sh_installed.stat.exists
   register: upgrade_result
   changed_when: upgrade_result.rc == 0 and "Upgrade success" in upgrade_result.stdout
@@ -30,7 +30,7 @@
 - name: Uninstall acme.sh
   ansible.builtin.import_tasks: uninstall.yml
   when:
-  - acme_sh_install_state is 'absent'
+  - acme_sh_install_state == "absent"
   - is_acme_sh_installed.stat.exists
 
 - name: Create path to copy certs to
@@ -40,7 +40,7 @@
     owner: "{{ acme_sh_become_user }}"
     group: "{{ acme_sh_become_user }}"
     mode: "0755"
-  when: acme_sh_install_state is not 'absent'
+  when: acme_sh_install_state != "absent"
 
 
 #- name: Run custom acme.sh command
@@ -81,7 +81,7 @@
     - item.force_renew is undefined or not item.force_renew
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
-    - acme_sh_install_state is not 'absent'
+    - acme_sh_install_state != "absent"
   become_user: "{{ acme_sh_become_user }}"
   register: issue_result
   changed_when: issue_result.rc == 0 and "Cert success" in issue_result.stdout
@@ -98,7 +98,7 @@
     - item.force_issue is undefined or not item.force_issue
     - item.force_renew is defined and item.force_renew
     - item.remove is undefined or not item.remove
-    - acme_sh_install_state is not 'absent'
+    - acme_sh_install_state != "absent"
   become_user: "{{ acme_sh_become_user }}"
   register: renew_result
   failed_when: renew_result.rc != 0 and "Reload error for" not in renew_result.stderr
@@ -118,7 +118,7 @@
     - acme_sh_domains and item.domains is defined and item.domains
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
-    - acme_sh_install_state is not 'absent'
+    - acme_sh_install_state != "absent"
 
 - name: Install acme.sh certificate(s)
   ansible.builtin.command: >-
@@ -135,7 +135,7 @@
     - acme_sh_domains and item.domains is defined and item.domains
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
-    - acme_sh_install_state is not 'absent'
+    - acme_sh_install_state != "absent"
   become_user: "{{ acme_sh_become_user }}"
   register: install_cert_result
   changed_when: issue_result.results[domains_index].changed or renew_result.results[domains_index].changed
@@ -150,7 +150,7 @@
     chdir: "~/.acme.sh"
   when: 
   - acme_sh_list_domains
-  - acme_sh_install_state is not 'absent'
+  - acme_sh_install_state != "absent"
   changed_when: False
   register: list_domains
   become_user: "{{ acme_sh_become_user }}"
@@ -161,6 +161,6 @@
   when: 
   - not ansible_check_mode
   - acme_sh_list_domains
-  - acme_sh_install_state is not 'absent'
+  - acme_sh_install_state != "absent"
 #endregion
 ...
