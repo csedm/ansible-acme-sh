@@ -38,7 +38,7 @@
 - name: Install acme.sh
   ansible.builtin.command:
     cmd: | 
-     {{ acme_sh_tmp_download_path }}/acme.sh --install -m {{ acme_sh_account_email }} \
+     {{ acme_sh_tmp_download_path }}/acmesh/acme.sh --install -m {{ acme_sh_account_email }} \
                --home {{ acme_sh_install_path }} \
                --config-home {{ acme_sh_config_home }} \
                --cert-home {{ acme_sh_cert_home }} \
