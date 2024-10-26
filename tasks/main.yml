@@ -122,7 +122,7 @@
 
 - name: Install acme.sh certificate(s)
   ansible.builtin.command: >-
-    {{acme_sh_install_path }}/acme.sh --install-cert -d {{ item.domains | first }}
+    {{ acme_sh_install_path }}/acme.sh --install-cert -d {{ item.domains | first }}
     --key-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.key
     --fullchain-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.pem
     --reloadcmd "{{ item.install_cert_reloadcmd | default(acme_sh_default_install_cert_reloadcmd) }}"
