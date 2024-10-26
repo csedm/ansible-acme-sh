@@ -44,12 +44,13 @@
 # Figure out what vars to use here, put them in defaults, etc...
 - name: Install acme.sh
   ansible.builtin.command:
-    cmd: | 
-     {{ acme_sh_tmp_download_path }}/acme.sh --install -m {{ acme_sh_account_email }} \
-               --home {{ acme_sh_install_path }} \
-               --config-home {{ acme_sh_config_home }} \
-               --cert-home {{ acme_sh_cert_home }} \
-               --days {{ acme_sh_renew_time_in_days }}
+    cmd: >-
+      {{ acme_sh_tmp_download_path }}/acme.sh --install
+      {{ "--accountemail " + acme_sh_account_email if acme_sh_account_email else "" }}
+      --home {{ acme_sh_install_path }}/
+      --config-home {{ acme_sh_config_home }}
+      --cert-home {{ acme_sh_cert_home }}
+      --days {{ acme_sh_renew_time_in_days }}
   args:
     creates: "{{ acme_sh_install_path }}/acme.sh"
 
