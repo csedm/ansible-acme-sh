@@ -20,7 +20,7 @@ jobs:
       - name: Lint acme_sh role
         id: lint
         run: |
-          apt-get install -y ansible-lint
+          sudo apt-get install -y ansible-lint
           ansible-lint ./* --profile min --exclude test/
   test:
     runs-on: ubuntu-latest
@@ -29,9 +29,9 @@ jobs:
       - name: Test acme_sh role on Ubuntu
         id: test-ubuntu
         run: |
-          apt-get install -y ansible
-          mkdir -p /etc/ansible/roles/
-          cp -r ./* /etc/ansible/roles/
+          sudo apt-get install -y ansible
+          sudo mkdir -p /etc/ansible/roles/
+          sudo cp -r ./* /etc/ansible/roles/
           ansible-playbook -i localhost, tests/test.yml
       - name: Test acme_sh role on OpenBSD
         id: test-openbsd
