@@ -9,7 +9,12 @@
   roles:
     - "acme_sh"
 
-  post_tasks:
+- name: Post-install tests
+  hosts: localhost
+  become: true
+  vars:
+    ansible_connection: local
+  tasks:
     - name: Ensure acme.sh was installed
       ansible.builtin.stat:
         path: /usr/local/bin/acme.sh
@@ -40,7 +45,12 @@
   roles:
   - acme_sh
 
-  post_tasks:
+- name: Post-uninstall tests
+  hosts: localhost
+  become: true
+  vars:
+    ansible_connection: local
+  tasks:
   - name: Ensure acme.sh was uninstalled
     ansible.builtin.stat:
       path: /usr/local/bin/acme.sh
