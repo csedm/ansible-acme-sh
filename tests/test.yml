@@ -5,10 +5,11 @@
   become: true
   vars:
     ansible_connection: local
-    acme_sh_install_state: present
   tasks:
-  - name: Include role now
-    ansible.builtin.include_role: 
+  - name: Import role
+    vars:
+      acme_sh_install_state: present
+    ansible.builtin.import_role: 
       name: acme_sh
 
 - name: Post-install tests
@@ -43,10 +44,11 @@
   become: true
   vars:
     ansible_connection: local
-    acme_sh_install_state: absent
   tasks:
-  - name: Include role now
-    ansible.builtin.include_role: 
+  - name: Import role
+    vars:
+      acme_sh_install_state: absent
+    ansible.builtin.import_role: 
       name: acme_sh
 
 - name: Post-uninstall tests
