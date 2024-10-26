@@ -1,0 +1,48 @@
+name: Test acme_sh role
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "master", "customizations" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint acme_sh role
+        id: lint
+        run: |
+          apt-get install -y ansible-lint
+          ansible-lint ./* --profile min --exclude test/
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test acme_sh role on Ubuntu
+        id: test-ubuntu
+        run: |
+          apt-get install -y ansible
+          mkdir -p /etc/ansible/roles/
+          cp -r ./* /etc/ansible/roles/
+          ansible-playbook -i localhost, tests/test.yml
+      - name: Test acme_sh role on OpenBSD
+        id: test-openbsd
+        uses: vmactions/openbsd-vm@v1.1.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          cpu: 2
+          prepare: |
+            pkg_add ansible
+            mkdir -p /etc/ansible/roles/
+            cp -r ./* /etc/ansible/roles/
+          run: |
+            ansible-playbook -i localhost, tests/test.yml
