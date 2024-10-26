@@ -5,6 +5,7 @@
     path: "{{ item }}"
   with_items:
   - "{{ acme_sh_tmp_download_path }}"
+  - "{{ acme_sh_tmp_download_path }}/acmesh"
   - "{{ acme_sh_install_path }}"
   - "{{ acme_sh_config_home }}"
   - "{{ acme_sh_cert_home }}"
