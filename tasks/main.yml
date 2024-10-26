@@ -145,11 +145,12 @@
 
 #region display-results
 - name: Register acme.sh certificate information
-  ansible.builtin.command: ./acme.sh --list
-  args:
-    chdir: "~/.acme.sh"
+  ansible.builtin.command:
+    cmd: >-
+      {{ acme_sh_install_path }}/acme.sh --list
   when: 
   - acme_sh_list_domains
+  - acme_sh_domains is defined
   - acme_sh_install_state != "absent"
   changed_when: False
   register: list_domains
@@ -161,6 +162,7 @@
   when: 
   - not ansible_check_mode
   - acme_sh_list_domains
+  - acme_sh_domains is defined
   - acme_sh_install_state != "absent"
 #endregion
 ...
