@@ -52,20 +52,6 @@ webroot, nginx or Apache but nothing is set in stone.
 # needs to already exist, this role will not create it.
 acme_sh_become_user: "root"
 
-# The acme.sh repo to clone.
-acme_sh_git_url: "https://github.com/acmesh-official/acme.sh"
-
-# The branch, tag or commit that will be cloned.
-acme_sh_git_version: "master"
-
-# By default if you were to clone this repo now and then 6 months from now you
-# clonged it again, it will stick with the old master version from 6 months ago.
-# If you want to pull the latest master version on every run, set this to True.
-acme_sh_git_update: False
-
-# Where will this repo get cloned to?
-acme_sh_git_clone_dest: "/usr/local/src/acme.sh"
-
 # When enabled, acme.sh will upgrade itself to the latest version which is
 # separate from updating the git repo. That's because acme.sh installs itself
 # with an installer after cloning the source code.
