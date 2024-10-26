@@ -46,8 +46,9 @@ jobs:
         with:
           cpu: 2
           prepare: |
-            pkg_add ansible
+            pkg_add ansible tree
+            tree -L 3
+          run: |
             mkdir -p tests/roles/acme_sh
             cp -r ./tasks ./defaults ./meta ./vars tests/roles/acme_sh/
-          run: |
             ansible-playbook -i localhost, tests/test.yml
