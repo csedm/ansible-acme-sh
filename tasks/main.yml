@@ -152,7 +152,7 @@
   - acme_sh_list_domains
   - acme_sh_domains is defined
   - acme_sh_install_state != "absent"
-  changed_when: False
+  changed_when: false
   register: list_domains
   become_user: "{{ acme_sh_become_user }}"
 
