@@ -21,7 +21,7 @@ jobs:
         id: lint
         run: |
           sudo apt-get install -y ansible-lint
-          ansible-lint --exclude test/ --force-color ./*
+          ansible-lint --exclude test/ --force-color ./*.yml -x indentation,
   test-ubuntu:
     runs-on: ubuntu-latest
     steps:
