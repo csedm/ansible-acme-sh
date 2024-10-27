@@ -33,12 +33,21 @@
   - acme_sh_install_state == "absent"
   - is_acme_sh_installed.stat.exists
 
-- name: Download dnsapi hook of choice
+- name: Download default dnsapi hook
   ansible.builtin.uri:
     url: "https://raw.githubusercontent.com/acmesh-official/acme.sh/refs/heads/master/dnsapi/{{ acme_sh_default_dns_provider }}.sh"
-    dest: "{{ acme_sh_install_path }}/"
+    dest: "{{ acme_sh_install_path }}/dnsapi/"
   when:
-  - acme_sh_install_state == "present" or acme_sh_install_state == "latest"
+  - acme_sh_install_state != "absent"
+  - is_acme_sh_installed
+
+- name: Download domain-specific dnsapi hooks
+  ansible.builtin.uri:
+    url: "https://raw.githubusercontent.com/acmesh-official/acme.sh/refs/heads/master/dnsapi/{{ item.dns_provider }}.sh"
+    dest: "{{ acme_sh_install_path }}/dnsapi/"
+  with_items: "{{ acme_sh_domains }}"
+  when:
+  - acme_sh_install_state != "absent"
   - is_acme_sh_installed
 
 - name: Create path to copy certs to
@@ -48,7 +57,9 @@
     owner: "{{ acme_sh_become_user }}"
     group: "{{ platform_equivalent_groups[acme_sh_become_user][ansible_os_family] }}"
     mode: "0755"
-  when: acme_sh_install_state != "absent"
+  when:
+  - acme_sh_install_certs
+  - acme_sh_install_state != "absent"
 
 
 # - name: Run custom acme.sh command
@@ -140,6 +151,7 @@
   loop_control:
     index_var: domains_index
   when:
+    - acme_sh_install_certs
     - acme_sh_domains and item.domains is defined and item.domains
     - item.custom_command is undefined or not item.custom_command
     - item.remove is undefined or not item.remove
