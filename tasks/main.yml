@@ -19,7 +19,7 @@
     dest: "{{ acme_sh_tmp_download_path }}/acme.sh"
     mode: '0744'
     owner: "{{ acme_sh_become_user }}"
-    group: "{{ acme_sh_become_user }}"
+    group: "{{ acme_sh_file_owning_group }}"
   when:
   - not acme_sh_uninstall
   - not is_acme_sh_installed.stat.exists
@@ -61,7 +61,7 @@
     path: "{{ acme_sh_copy_certs_to_path }}"
     state: "directory"
     owner: "{{ acme_sh_become_user }}"
-    group: "{{ acme_sh_become_user }}"
+    group: "{{ acme_sh_file_owning_group }}"
     mode: "0755"
   when: not acme_sh_uninstall
 
@@ -185,7 +185,7 @@
 - name: Ensure installed certificates have correct user / group ownership
   file:
     path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
-    group: "{{ acme_sh_become_user }}"
+    group: "{{ acme_sh_file_owning_group }}"
     owner: "{{ acme_sh_become_user }}"
     mode: "0644"
   loop:

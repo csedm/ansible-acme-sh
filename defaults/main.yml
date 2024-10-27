@@ -1,6 +1,7 @@
 ---
 
 acme_sh_become_user: "root"
+acme_sh_file_owning_group: "{{ 'root' if ansible_os_family != 'OpenBSD' else 'wheel' }}"
 
 acme_sh_git_version: "master"
 acme_sh_git_update: False
