@@ -7,6 +7,12 @@
   loop: "{{ acme_sh_dependencies }}"
   when: not acme_sh_uninstall
 
+- name: Determine if acme.sh is installed
+  stat:
+    path: "~/.acme.sh/acme.sh"
+  register: is_acme_sh_installed
+  become_user: "{{ acme_sh_become_user }}"
+
 - name: Create git clone path
   file:
     path: "{{ acme_sh_git_clone_dest | dirname }}"
@@ -34,12 +40,6 @@
     chdir: "{{ acme_sh_git_clone_dest }}"
     creates: "~/.acme.sh/acme.sh"
   when: not acme_sh_uninstall
-  become_user: "{{ acme_sh_become_user }}"
-
-- name: Determine if acme.sh is installed
-  stat:
-    path: "~/.acme.sh/acme.sh"
-  register: is_acme_sh_installed
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Upgrade acme.sh
