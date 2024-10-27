@@ -33,6 +33,14 @@
   - acme_sh_install_state == "absent"
   - is_acme_sh_installed.stat.exists
 
+- name: Download dnsapi hook of choice
+  ansible.builtin.uri:
+    url: "https://raw.githubusercontent.com/acmesh-official/acme.sh/refs/heads/master/dnsapi/{{ acme_sh_default_dns_provider }}.sh"
+    dest: "{{ acme_sh_install_path }}/"
+  when:
+  - acme_sh_install_state == "present" or acme_sh_install_state == "latest"
+  - is_acme_sh_installed
+
 - name: Create path to copy certs to
   ansible.builtin.file:
     path: "{{ acme_sh_copy_certs_to_path }}"
