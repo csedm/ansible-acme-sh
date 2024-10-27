@@ -4,6 +4,7 @@ acme_sh_become_user: "root"
 acme_sh_cert_owning_group: "{{ 'root' if ansible_os_family != 'OpenBSD' else 'wheel' }}"
 
 acme_sh_git_version: "master"
+acme_sh_download_url: "https://raw.githubusercontent.com/acmesh-official/acme.sh/{{ acme_sh_git_version }}/acme.sh"
 acme_sh_tmp_download_path: "/tmp"
 
 acme_sh_upgrade: false

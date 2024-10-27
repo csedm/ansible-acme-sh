@@ -15,7 +15,7 @@
 
 - name: Download acme.sh from github.com
   ansible.builtin.uri:
-    url: "https://raw.githubusercontent.com/acmesh-official/acme.sh/{{ acme_sh_git_version }}/acme.sh"
+    url: "{{ acme_sh_download_url }}"
     dest: "{{ acme_sh_tmp_download_path }}/acme.sh"
     mode: '0744'
     owner: "{{ acme_sh_become_user }}"
