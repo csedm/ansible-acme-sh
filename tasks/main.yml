@@ -224,7 +224,7 @@
   args:
     chdir: "~/.acme.sh"
   when: acme_sh_list_domains and not acme_sh_uninstall
-  changed_when: False
+  changed_when: false
   register: list_domains
   become_user: "{{ acme_sh_become_user }}"
 

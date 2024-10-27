@@ -4,11 +4,11 @@ acme_sh_become_user: "root"
 acme_sh_file_owning_group: "{{ 'root' if ansible_os_family != 'OpenBSD' else 'wheel' }}"
 
 acme_sh_git_version: "master"
-acme_sh_git_update: False
+acme_sh_git_update: false
 acme_sh_tmp_download_path: "/tmp"
 
-acme_sh_upgrade: False
-acme_sh_uninstall: False
+acme_sh_upgrade: false
+acme_sh_uninstall: false
 
 acme_sh_account_email: ""
 
@@ -16,14 +16,14 @@ acme_sh_renew_time_in_days: 30
 
 acme_sh_copy_certs_to_path: "/etc/ssl/ansible"
 
-acme_sh_list_domains: True
+acme_sh_list_domains: true
 
-acme_sh_default_staging: True
+acme_sh_default_staging: true
 
-acme_sh_default_force_issue: False
-acme_sh_default_force_renew: False
+acme_sh_default_force_issue: false
+acme_sh_default_force_renew: false
 
-acme_sh_default_debug: False
+acme_sh_default_debug: false
 
 acme_sh_default_dns_provider: "dns_dgon"
 acme_sh_default_dns_provider_api_keys: {}
@@ -39,7 +39,7 @@ acme_sh_default_issue_pre_hook: ""
 acme_sh_default_issue_post_hook: ""
 acme_sh_default_issue_renew_hook: ""
 
-acme_sh_default_remove: False
+acme_sh_default_remove: false
 
 acme_sh_git_clone_dest_legacy: "/usr/local/src/acme.sh"
 
