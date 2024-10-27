@@ -79,7 +79,7 @@ The following variables are supplied as part of the `acme_sh_domains_list` varia
 
 In practice the specification structure looks like this. If you want separate files then create a new `domains:` item in the list.
 ```ansible
-acme_sh_domains_list:
+acme_sh_domains:
 - domains: ["example.com", "www.example.com", "admin.example.com"]
     staging: false
     force_issue: false
@@ -105,13 +105,13 @@ you have a typical `site.yml` file.
 To use this role edit your `site.yml` file to look something like this:
 ```
 ---
-
 - name: Configure app server(s)
   hosts: "app"
   become: True
 
   roles:
     - { role: "acme_sh", tags: ["acme_sh"] }
+...
 ```
 
 Here's a few examples. You can recreate this example on your end by opening or
