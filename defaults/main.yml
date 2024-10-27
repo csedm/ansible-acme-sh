@@ -44,3 +44,5 @@ acme_sh_default_remove: false
 acme_sh_git_clone_dest_legacy: "/usr/local/src/acme.sh"
 
 acme_sh_domains: []
+
+...

@@ -232,3 +232,5 @@
   debug:
     msg: "{{ list_domains.stdout_lines }}"
   when: not ansible_check_mode and acme_sh_list_domains and not acme_sh_uninstall
+
+...
