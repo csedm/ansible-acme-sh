@@ -42,6 +42,7 @@
   become: true
   vars:
     ansible_connection: local
+    acme_sh_uninstall: true
     acme_sh_default_remove: true
   tasks:
   - name: Import role
