@@ -22,8 +22,8 @@ Also, it's nice using DNS challenges because DNS challenges are the only way to 
 
 ## Supported platforms
 
-- OpenBSD
-- Ubuntu
+- [![OpenBSD](https://github.com/csedm/ansible-acme-sh/actions/workflows/OpenBSD.yml/badge.svg)](https://github.com/csedm/ansible-acme-sh/actions/workflows/OpenBSD.yml)
+- [![Ubuntu](https://github.com/csedm/ansible-acme-sh/actions/workflows/Ubuntu.yml/badge.svg)](https://github.com/csedm/ansible-acme-sh/actions/workflows/Ubuntu.yml)
 - Debian
 - RedHat
 
