@@ -1,12 +1,16 @@
-## What is ansible-acme-sh? 
+## ansible-acme-sh
 
-It is an [Ansible](http://www.ansible.com/home) role to:
+This project contains the `acme_sh` [Ansible](http://www.ansible.com/home) role which:
 
-- Install acme.sh to issue, renew or remove Let's Encrypt based SSL certificates
-- Issue certificates for single, multiple or wildcard domains
-- Configure multiple domains through 1 certificate or separate certificates
-- Issue DNS based challenges using acme.sh's automated DNS API feature
-- Run custom acme.sh commands if the presets are not enough for you
+- Installs acme.sh to issue, renew or remove Let's Encrypt based SSL certificates
+- Issues certificates for single, multiple or wildcard domains
+- Configures multiple domains through 1 certificate or separate certificates
+- Issues DNS based challenges using acme.sh's automated DNS API feature
+- Runs custom acme.sh commands if the presets are not enough for you
+
+
+This is a fork of [nickjj's original ansible role](https://github.com/nickjj/ansible-acme-sh) with some updates to minimize dependencies and to enable support for OpenBSD. I have left much of this README the same, however some sections were reorganized to aid in readability.
+
 
 ## Why would you want to use this role?
 
@@ -65,21 +69,21 @@ The following variables are supplied as part of the `acme_sh_domains_list` varia
 
 | Domains List Variables | Description | 
 | ---------------------- | ----------- |
-| `staging: false` | Optionally override the default staging variable. This overall pattern lets you situationally override the defaults listed above for each domain list. |
-| `force_issue: false`          | Optionally force issue new certificates. |
-| `force_renew: false`          | Optionally force renew certificates. |
-| `debug: true`                 | Optionally turn on debug mode. |
-| `dns_provider: "dns_namesilo"`| Optionally override the default DNS provider. |
-| `dns_provider_api_keys:`      | Optionally override the default DNS API keys. |
-| `dns_sleep: 900`              | Optionally override the default DNS sleep time. |
-| `extra_flags_issue: ""`       | Optionally add extra flags the issue action. |
-| `extra_flags_renew: ""`       | Optionally add extra flags the renew action. |
-| `extra_flags_install_cert: ""`| Optionally add extra flags the install cert action. |
-| `install_cert_reloadcmd: "whoami"`| Optionally set a different reload command. |
-| `extra_issue_pre_hook: ""`     | Optionally run commands during different points in the cert issue process. |
-| `extra_issue_post_hook: ""`    | |
-| `extra_issue_renew_hook: ""`    | |
-| `remove: true`                | Optionally remove and disable the certificate. |
+| `staging: false`                    | Optionally override the default staging variable. This overall pattern lets you situationally override the defaults listed above for each domain list. |
+| `force_issue: false`                | Optionally force issue new certificates. |
+| `force_renew: false`                | Optionally force renew certificates. |
+| `debug: true`                       | Optionally turn on debug mode. |
+| `dns_provider: "dns_namesilo"`      | Optionally override the default DNS provider. |
+| `dns_provider_api_keys:`            | Optionally override the default DNS API keys. |
+| `dns_sleep: 900`                    | Optionally override the default DNS sleep time. |
+| `extra_flags_issue: ""`             | Optionally add extra flags the issue action. |
+| `extra_flags_renew: ""`             | Optionally add extra flags the renew action. |
+| `extra_flags_install_cert: ""`      | Optionally add extra flags the install cert action. |
+| `install_cert_reloadcmd: "whoami"`  | Optionally set a different reload command. |
+| `extra_issue_pre_hook: ""`          | Optionally run commands during different points in the cert issue process. |
+| `extra_issue_post_hook: ""`         | |
+| `extra_issue_renew_hook: ""`        | |
+| `remove: true`                      | Optionally remove and disable the certificate. |
 
 In practice the specification structure looks like this. If you want separate files then create a new `domains:` item in the list.
 ```ansible
