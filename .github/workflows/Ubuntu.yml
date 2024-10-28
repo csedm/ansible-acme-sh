@@ -1,4 +1,4 @@
-name: Test acme_sh role
+name: Ubuntu
 
 # Controls when the workflow will run
 on:
@@ -24,21 +24,3 @@ jobs:
           mkdir -p tests/roles/acme_sh
           cp -r ./tasks ./defaults ./meta ./vars tests/roles/acme_sh/
           ansible-playbook -i localhost, tests/test.yml
-
-  test-openbsd:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Test acme_sh role on OpenBSD
-        id: test-openbsd
-        uses: vmactions/openbsd-vm@v1.1.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          cpu: 2
-          prepare: |
-            pkg_add ansible
-          run: |
-            mkdir -p tests/roles/acme_sh
-            cp -r ./tasks ./defaults ./meta ./vars tests/roles/acme_sh/
-            ansible-playbook -i localhost, tests/test.yml
