@@ -1,14 +1,14 @@
 ---
 
 - name: Install dependencies
-  package:
+  ansible.builtin.package:
     name: "{{ item }}"
     state: "present"
   loop: "{{ acme_sh_dependencies[ansible_os_family] }}"
   when: not acme_sh_uninstall
 
 - name: Determine if acme.sh is installed
-  stat:
+  ansible.builtin.stat:
     path: "~/.acme.sh/acme.sh"
   register: is_acme_sh_installed
   become_user: "{{ acme_sh_become_user }}"
@@ -26,7 +26,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Install acme.sh
-  command: >-
+  ansible.builtin.command: >-
     ./acme.sh --install-online --log
     --days {{ acme_sh_renew_time_in_days }}
     {{ "--accountemail " + acme_sh_account_email if acme_sh_account_email else "" }}
@@ -45,7 +45,7 @@
   - "{{ acme_sh_git_clone_dest_legacy }}"
 
 - name: Upgrade acme.sh
-  command: ./acme.sh --upgrade
+  ansible.builtin.command: ./acme.sh --upgrade
   args:
     chdir: "~/.acme.sh"
   when:
@@ -57,7 +57,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Create certificate path
-  file:
+  ansible.builtin.file:
     path: "{{ acme_sh_copy_certs_to_path }}"
     state: "directory"
     owner: "{{ acme_sh_become_user }}"
@@ -66,7 +66,7 @@
   when: not acme_sh_uninstall
 
 - name: Uninstall acme.sh and disable all certificate renewals
-  command: ./acme.sh --uninstall
+  ansible.builtin.command: ./acme.sh --uninstall
   args:
     chdir: "~/.acme.sh"
   when:
@@ -75,7 +75,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Remove acme.sh certificate(s) renewals from cron job
-  command: >-
+  ansible.builtin.command: >-
     ./acme.sh --remove -d {{ item.domains | first }}
     {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
   args:
@@ -90,7 +90,7 @@
   register: remove_result
 
 - name: Remove acme.sh internal certificate files
-  file:
+  ansible.builtin.file:
     path: "~/.acme.sh/{{ item.domains | first }}"
     state: "absent"
   when:
@@ -101,7 +101,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Remove acme.sh installed certificate files
-  file:
+  ansible.builtin.file:
     path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
     state: "absent"
   loop: "{{ acme_sh_domains }}"
@@ -111,7 +111,7 @@
     - not acme_sh_uninstall
 
 - name: Remove acme.sh installation path and log files
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: "absent"
   loop:
@@ -121,7 +121,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Run custom acme.sh command
-  command: ./acme.sh {{ item.custom_command }}
+  ansible.builtin.command: ./acme.sh {{ item.custom_command }}
   args:
     chdir: "~/.acme.sh"
   environment: "{{ item.dns_provider_api_keys | default(acme_sh_default_dns_provider_api_keys) }}"
@@ -136,7 +136,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: Issue acme.sh certificate(s) (this will sleep for dns_sleep seconds)
-  command: >-
+  ansible.builtin.command: >-
     ./acme.sh --issue -d {{ item.domains | join(" -d ") }}
     --dns {{ item.dns_provider | default(acme_sh_default_dns_provider) }}
     --dnssleep {{ item.dns_sleep | default(acme_sh_default_dns_sleep) }}
@@ -165,7 +165,7 @@
   failed_when: issue_result.rc != 0 and "Domains not changed" not in issue_result.stdout
 
 - name: Force renew acme.sh certificate(s)
-  command: >-
+  ansible.builtin.command: >-
     ./acme.sh --renew -d {{ item.domains | first }} --force
     {{ "--debug" if item.debug | default(acme_sh_default_debug) else "" }}
     {{ item.extra_flags_renew | default(acme_sh_default_extra_flags_renew) }}
@@ -183,7 +183,7 @@
   failed_when: renew_result.rc != 0 and "Reload error for" not in renew_result.stderr
 
 - name: Ensure installed certificates have correct user / group ownership
-  file:
+  ansible.builtin.file:
     path: "{{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}*"
     group: "{{ acme_sh_cert_owning_group }}"
     owner: "{{ acme_sh_become_user }}"
@@ -197,7 +197,7 @@
     - not acme_sh_uninstall
 
 - name: Install acme.sh certificate(s)
-  command: >-
+  ansible.builtin.command: >-
     ./acme.sh --install-cert -d {{ item.domains | first }}
     --key-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.key
     --fullchain-file {{ acme_sh_copy_certs_to_path }}/{{ item.domains | first }}.pem
@@ -220,7 +220,7 @@
   failed_when: install_cert_result.rc != 0 and "Reload error for" not in install_cert_result.stderr
 
 - name: Register acme.sh certificate information
-  command: ./acme.sh --list
+  ansible.builtin.command: ./acme.sh --list
   args:
     chdir: "~/.acme.sh"
   when: acme_sh_list_domains and not acme_sh_uninstall
@@ -229,7 +229,7 @@
   become_user: "{{ acme_sh_become_user }}"
 
 - name: List acme.sh certificate information
-  debug:
+  ansible.builtin.debug:
     msg: "{{ list_domains.stdout_lines }}"
   when: not ansible_check_mode and acme_sh_list_domains and not acme_sh_uninstall
 
