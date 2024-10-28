@@ -1,6 +1,7 @@
 ---
 
 galaxy_info:
+  namespace: "csedm"
   role_name: "acme_sh"
   author: "Nick Janetakis"
   description: "Install and auto-renew SSL certificates with Let's Encrypt using acme.sh."
