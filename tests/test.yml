@@ -1,0 +1,71 @@
+---
+
+- name: Test acme_sh role installation
+  hosts: localhost
+  become: true
+  vars:
+    ansible_connection: local
+  tasks:
+  - name: Import role
+    ansible.builtin.import_role: 
+      name: acme_sh
+
+- name: Post-install tests
+  hosts: localhost
+  become: true
+  vars:
+    ansible_connection: local
+  tasks:
+    - name: Ensure acme.sh was installed
+      ansible.builtin.stat:
+        path: "~/.acme.sh/acme.sh"
+      register: result_acme_sh_installed_path
+      failed_when: not result_acme_sh_installed_path.stat.exists
+
+    - name: Ensure certificate installation path exists
+      ansible.builtin.stat:
+        path: /etc/ssl/ansible
+      register: result_cert_installed_path
+      failed_when: not result_cert_installed_path.stat.exists
+    
+    - name: Ensure temp download files were removed
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: result_tmp_download_path
+      failed_when: result_tmp_download_path.stat.exists
+      with_items:
+      - "/tmp/acmesh.sh"
+      - "/usr/local/src/acme.sh"
+
+- name: Test acme_sh role uninstallation
+  hosts: localhost
+  become: true
+  vars:
+    ansible_connection: local
+    acme_sh_default_remove: true
+  tasks:
+  - name: Import role
+    ansible.builtin.import_role: 
+      name: acme_sh
+
+- name: Post-uninstall tests
+  hosts: localhost
+  become: true
+  vars:
+    ansible_connection: local
+  tasks:
+  - name: Ensure acme.sh was uninstalled
+    ansible.builtin.stat:
+      path: "~/.acme.sh/acme.sh"
+    register: result_acme_sh_installed_path
+    failed_when: result_acme_sh_installed_path.stat.exists
+  
+  - name: Ensure acme.sh created paths were removed
+    ansible.builtin.stat:
+      path: "{{ item }}"
+    register: result_acme_sh_created_paths
+    failed_when: result_acme_sh_created_paths.stat.exists
+    with_items:
+    - "~/.acme.sh"
+    - "/etc/ssl/ansible"
+...
