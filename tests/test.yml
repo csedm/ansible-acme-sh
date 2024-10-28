@@ -68,5 +68,5 @@
     failed_when: result_acme_sh_created_paths.stat.exists
     with_items:
     - "~/.acme.sh"
-    - "/etc/ssl/ansible"
+
 ...
