@@ -37,3 +37,5 @@
       command: test -d /etc/ssl/ansible
       register: result_cert_installed_path
       changed_when: result_cert_installed_path.rc != 0
+
+...

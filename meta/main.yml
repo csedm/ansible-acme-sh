@@ -5,17 +5,18 @@ galaxy_info:
   author: "Nick Janetakis"
   description: "Install and auto-renew SSL certificates with Let's Encrypt using acme.sh."
   license: "license (MIT)"
-  min_ansible_version: 2.5
+  min_ansible_version: "2.5"
 
   platforms:
+    - name: OpenBSD
+      versions:
+        - "all"
     - name: "Ubuntu"
       versions:
-        - "xenial"
-        - "bionic"
+        - "all"
     - name: "Debian"
       versions:
-        - "jessie"
-        - "stretch"
+        - "all"
 
   galaxy_tags:
     - "acme"
@@ -27,3 +28,5 @@ galaxy_info:
     - "system"
 
 dependencies: []
+
+...

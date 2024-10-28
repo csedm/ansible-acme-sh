@@ -1,0 +1,13 @@
+---
+
+acme_sh_dependencies:
+  OpenBSD:
+  - curl
+  Debian:
+  - cron
+  - curl
+  RedHat:
+  - cron
+  - curl
+
+...
